@@ -26,15 +26,15 @@ export default function Login({ status, canResetPassword }) {
             <Head title="Masuk" />
 
             <div className="text-center mb-8">
-                <h2 className="text-3xl font-display font-bold text-white tracking-tight">Selamat Datang</h2>
-                <p className="text-gray-400 mt-2 text-sm">Masuk untuk mengelola keuangan Anda.</p>
+                <h2 className="text-2xl font-semibold text-text-primary tracking-tight">Selamat Datang</h2>
+                <p className="text-text-secondary mt-2 text-sm">Masuk untuk mengelola keuangan Anda.</p>
             </div>
 
-            {status && <div className="mb-4 font-medium text-sm text-emerald-400 p-3 bg-emerald-500/10 rounded-lg">{status}</div>}
+            {status && <div className="mb-4 font-medium text-sm text-success p-3 bg-success/10 rounded-lg">{status}</div>}
 
             <form onSubmit={submit} className="space-y-6">
                 <div>
-                    <InputLabel htmlFor="email" value="Email" className="text-gray-300 font-medium" />
+                    <InputLabel htmlFor="email" value="Email" />
 
                     <TextInput
                         id="email"
@@ -52,11 +52,11 @@ export default function Login({ status, canResetPassword }) {
 
                 <div>
                     <div className="flex justify-between items-center mt-4">
-                        <InputLabel htmlFor="password" value="Kata Sandi" className="text-gray-300 font-medium" />
+                        <InputLabel htmlFor="password" value="Kata Sandi" />
                         {canResetPassword && (
                             <Link
                                 href={route('password.request')}
-                                className="text-sm font-medium text-accent hover:text-accent-hover rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent/50 transition-colors"
+                                className="text-sm text-text-tertiary hover:text-text-primary transition-colors"
                             >
                                 Lupa sandi?
                             </Link>
@@ -82,22 +82,21 @@ export default function Login({ status, canResetPassword }) {
                             name="remember"
                             checked={data.remember}
                             onChange={(e) => setData('remember', e.target.checked)}
-                            className="bg-surfaceHighlight border-border text-accent rounded focus:ring-accent/50"
                         />
-                        <span className="ml-2 text-sm text-gray-400">Ingat saya</span>
+                        <span className="ml-2 text-sm text-text-secondary">Ingat saya</span>
                     </label>
                 </div>
 
                 <div className="flex items-center justify-end mt-8">
-                    <PrimaryButton className="w-full justify-center py-3.5 text-base font-semibold shadow-[0_0_20px_rgba(99,102,241,0.2)]" disabled={processing}>
+                    <PrimaryButton className="w-full justify-center py-3" disabled={processing}>
                         Masuk
                     </PrimaryButton>
                 </div>
                 
                 <div className="text-center mt-6">
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-text-secondary">
                         Belum punya akun?{' '}
-                        <Link href={route('register')} className="text-indigo-400 hover:text-indigo-300 font-medium">
+                        <Link href={route('register')} className="text-text-primary hover:text-accent transition-colors font-medium">
                             Daftar di sini
                         </Link>
                     </p>
