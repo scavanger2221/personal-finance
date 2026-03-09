@@ -10,6 +10,7 @@ import {
     ResponsiveContainer,
     Cell
 } from 'recharts';
+import { formatRupiah } from '@/lib/currency';
 
 export default function TrendChart({ data }) {
     if (!data || data.length === 0) {
@@ -30,11 +31,7 @@ export default function TrendChart({ data }) {
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
                             <span className="text-sm text-gray-400">{entry.name}:</span>
                             <span className={`text-sm font-semibold font-display ${entry.dataKey === 'income' ? 'text-emerald-400' : 'text-rose-400'}`}>
-                                {new Intl.NumberFormat('id-ID', {
-                                    style: 'currency',
-                                    currency: 'IDR',
-                                    minimumFractionDigits: 0,
-                                }).format(entry.value)}
+                                {formatRupiah(entry.value)}
                             </span>
                         </div>
                     ))}

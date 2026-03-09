@@ -56,7 +56,7 @@ export default function Login({ status, canResetPassword }) {
                         {canResetPassword && (
                             <Link
                                 href={route('password.request')}
-                                className="text-sm font-medium text-indigo-400 hover:text-indigo-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-indigo-500 transition-colors"
+                                className="text-sm font-medium text-accent hover:text-accent-hover rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent/50 transition-colors"
                             >
                                 Lupa sandi?
                             </Link>
@@ -82,7 +82,7 @@ export default function Login({ status, canResetPassword }) {
                             name="remember"
                             checked={data.remember}
                             onChange={(e) => setData('remember', e.target.checked)}
-                            className="bg-surfaceHighlight border-border text-indigo-500 rounded focus:ring-indigo-500/50"
+                            className="bg-surfaceHighlight border-border text-accent rounded focus:ring-accent/50"
                         />
                         <span className="ml-2 text-sm text-gray-400">Ingat saya</span>
                     </label>

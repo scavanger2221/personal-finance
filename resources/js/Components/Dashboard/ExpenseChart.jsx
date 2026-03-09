@@ -7,6 +7,7 @@ import {
     Tooltip,
     Legend
 } from 'recharts';
+import { formatRupiah } from '@/lib/currency';
 
 const COLORS = [
     '#6366f1', '#10b981', '#f59e0b', '#ef4444', 
@@ -29,11 +30,7 @@ export default function ExpenseChart({ data }) {
                 <div className="bg-[#111111] border border-[#222] p-3 rounded-xl shadow-2xl">
                     <p className="text-gray-200 text-sm font-medium mb-1">{payload[0].name}</p>
                     <p className="text-sm font-semibold font-display text-rose-400">
-                        {new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            minimumFractionDigits: 0,
-                        }).format(payload[0].value)}
+                        {formatRupiah(payload[0].value)}
                     </p>
                 </div>
             );

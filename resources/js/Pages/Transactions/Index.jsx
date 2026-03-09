@@ -12,6 +12,7 @@ import {
     TableWrapper,
     SortableHeader,
     AnimatedTableRow,
+    TableCell,
     EmptyTableState,
     TableActions,
     TableActionButton,
@@ -19,18 +20,29 @@ import {
     ResultsCount,
 } from '@/Components/Table';
 import { Edit2, Trash2, Download, FileText, Table as TableIcon, Plus, Wallet, TrendingUp, TrendingDown, Calendar, Search, X } from 'lucide-react';
+import { formatRupiah } from '@/lib/currency';
 
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
-        transition: { staggerChildren: 0.1 }
+        transition: { 
+            staggerChildren: 0.03,
+            duration: 0.2
+        }
     }
 };
 
 const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    hidden: { opacity: 0, y: 4 },
+    visible: { 
+        opacity: 1, 
+        y: 0, 
+        transition: { 
+            duration: 0.2,
+            ease: [0.4, 0, 0.2, 1]
+        } 
+    }
 };
 
 export default function Index({ transactions, categories, filters }) {
@@ -61,9 +73,9 @@ export default function Index({ transactions, categories, filters }) {
 
     const SortIcon = ({ field }) => {
         if (currentSort !== field) {
-            return <span className="inline-block w-3 h-3 text-gray-600 opacity-50">↕</span>;
+            return <span className="inline-block w-3 h-3 text-text-tertiary opacity-50">↕</span>;
         }
-        return <span className="inline-block w-3 h-3 text-indigo-400">{currentDirection === 'asc' ? '↑' : '↓'}</span>;
+        return <span className="inline-block w-3 h-3 text-text-primary">{currentDirection === 'asc' ? '↑' : '↓'}</span>;
     };
 
     const visitTransactions = useCallback((search = '') => {
@@ -165,12 +177,12 @@ export default function Index({ transactions, categories, filters }) {
                     const isMuted = link.url === null;
                     
                     return isMuted ? (
-                        <div key={key} className="px-4 py-2 text-sm text-gray-600 bg-surface/50 border border-border/50 rounded-lg" dangerouslySetInnerHTML={{ __html: link.label }} />
+                        <div key={key} className="px-4 py-2 text-sm text-text-disabled bg-surface border border-border rounded-button" dangerouslySetInnerHTML={{ __html: link.label }} />
                     ) : (
                         <button
                             key={key}
                             onClick={() => handlePageClick(link.url)}
-                            className={`px-4 py-2 text-sm transition-all duration-200 rounded-lg border ${isActive ? 'bg-indigo-600/20 border-indigo-500/50 text-indigo-400 font-medium' : 'bg-surface border-border text-gray-400 hover:bg-surfaceHighlight hover:text-white'}`}
+                            className={`px-4 py-2 text-sm transition-colors duration-200 rounded-button border ${isActive ? 'bg-surface-elevated border-border-strong text-text-primary font-medium' : 'bg-surface border-border text-text-secondary hover:bg-surface-elevated hover:text-text-primary'}`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
                     );
@@ -193,40 +205,40 @@ export default function Index({ transactions, categories, filters }) {
 
         return (
             <>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-400 rounded-l-xl">
+                <TableCell className="text-text-secondary">
                     {formatDate(transaction.transaction_date)}
-                </td>
-                <td className="px-4 py-4">
+                </TableCell>
+                <TableCell>
                     <div className="flex items-center">
-                        <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center mr-4 border ${isIncome ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
+                        <div className={`flex-shrink-0 w-10 h-10 rounded-button flex items-center justify-center mr-4 border ${isIncome ? 'bg-success/10 text-success border-success/20' : 'bg-danger/10 text-danger border-danger/20'}`}>
                             {isIncome ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
                         </div>
                         <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium text-gray-200 truncate">{transaction.description || transaction.category.name}</div>
-                            <div className="text-xs text-gray-500 mt-0.5">{transaction.category.name}</div>
+                            <div className="text-sm font-medium text-text-primary truncate">{transaction.description || transaction.category.name}</div>
+                            <div className="text-xs text-text-tertiary mt-0.5">{transaction.category.name}</div>
                         </div>
                     </div>
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap text-right">
-                    <span className={`inline-flex items-center text-base font-semibold font-display ${isIncome ? 'text-emerald-400' : 'text-rose-400'}`}>
+                </TableCell>
+                <TableCell align="right">
+                    <span className={`inline-flex items-center text-base font-semibold font-mono ${isIncome ? 'text-success' : 'text-danger'}`}>
                         {isIncome ? '+' : '-'}
-                        {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(transaction.amount)}
+                        {formatRupiah(transaction.amount)}
                     </span>
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium rounded-r-xl">
+                </TableCell>
+                <TableCell align="right" className="font-medium">
                     <TableActions>
                         <TableActionButton
                             onClick={() => setEditingTransaction(transaction)}
                             icon={Edit2}
-                            color="indigo"
+                            color="accent"
                         />
                         <TableActionButton
                             onClick={() => setDeletingTransaction(transaction)}
                             icon={Trash2}
-                            color="rose"
+                            color="danger"
                         />
                     </TableActions>
-                </td>
+                </TableCell>
             </>
         );
     };
@@ -234,26 +246,25 @@ export default function Index({ transactions, categories, filters }) {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-5">
                     {/* Title Row */}
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div>
-                            <h2 className="text-3xl font-display font-semibold text-gray-100 tracking-tight">
+                            <h2 className="text-3xl font-semibold text-text-primary tracking-tight">
                                 Transaksi
                             </h2>
-                            <p className="mt-1 text-sm text-gray-400">Kelola arus kas dan riwayat pengeluaran Anda.</p>
+                            <p className="mt-1 text-sm text-text-secondary">Kelola arus kas dan riwayat pengeluaran Anda.</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <button
+                            <SecondaryButton
                                 onClick={() => setIsExporting(true)}
-                                className="inline-flex items-center px-4 py-2 bg-surfaceHighlight border border-border rounded-lg font-medium text-sm text-gray-300 hover:text-white hover:bg-surfaceHighlight/80 focus:outline-none transition-all duration-200"
                             >
                                 <Download className="w-4 h-4 mr-2" />
                                 Ekspor
-                            </button>
+                            </SecondaryButton>
                             <button
                                 onClick={() => setIsCreatingTransaction(true)}
-                                className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-white text-black border border-transparent rounded-lg font-medium text-sm focus:outline-none transition-all duration-200 shadow-sm"
+                                className="inline-flex items-center px-4 py-2 bg-accent hover:bg-accent-hover text-background border border-transparent rounded-button font-medium text-sm transition-colors duration-200"
                             >
                                 <Plus className="w-4 h-4 mr-2" />
                                 Catat Transaksi
@@ -283,21 +294,18 @@ export default function Index({ transactions, categories, filters }) {
         >
             <Head title="Transaksi" />
 
-            <div className="py-8">
+            <div className="py-6">
                 <motion.div 
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="mx-auto max-w-7xl sm:px-6 lg:px-8"
+                    className="mx-auto max-w-7xl"
                 >
-                    {/* Full Width Transactions Table */}
-                    <motion.div variants={itemVariants} className="bg-surface border border-border rounded-2xl overflow-hidden relative shadow-2xl">
-                        <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
-                        
-                        <div className="p-6 relative z-10">
+                    <motion.div variants={itemVariants} className="bg-surface border border-border rounded-card overflow-hidden">
+                        <div className="p-5">
                             <TableWrapper isLoading={isSearching} resultsKey={resultsKey}>
                                 <div className="overflow-x-auto overflow-y-hidden">
-                                    <table className="min-w-full text-left border-separate border-spacing-y-2">
+                                    <table className="min-w-full text-left border-collapse">
                                         <thead>
                                             <tr>
                                                 <SortableHeader field="transaction_date" onClick={handleSort} SortIcon={SortIcon}>
@@ -309,16 +317,16 @@ export default function Index({ transactions, categories, filters }) {
                                                 <SortableHeader field="amount" onClick={handleSort} SortIcon={SortIcon} align="right">
                                                     Jumlah
                                                 </SortableHeader>
-                                                <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-border text-right">Aksi</th>
+                                                <th className="px-4 py-3 text-xs font-medium text-text-secondary tracking-wider border-b border-border-strong text-right">Aksi</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y-0">
+                                        <motion.tbody variants={containerVariants} initial="hidden" animate="visible" className="divide-y divide-border/50">
                                             {transactions.data.map((transaction, index) => (
                                                 <AnimatedTableRow key={transaction.id} index={index}>
                                                     <TransactionRow transaction={transaction} />
                                                 </AnimatedTableRow>
                                             ))}
-                                        </tbody>
+                                        </motion.tbody>
                                     </table>
                                 </div>
                                 
@@ -339,20 +347,19 @@ export default function Index({ transactions, categories, filters }) {
 
             {/* Create Modal */}
             <Modal show={isCreatingTransaction} onClose={() => setIsCreatingTransaction(false)}>
-                <div className="p-6 bg-surface border border-border relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[50px] rounded-full pointer-events-none" />
-                    <h2 className="text-2xl font-display font-medium text-gray-100 mb-6 relative z-10 flex items-center">
-                        <Plus className="w-6 h-6 mr-2 text-indigo-500" /> Catat Transaksi
+                <div className="p-6 bg-surface border border-border">
+                    <h2 className="text-2xl font-medium text-text-primary mb-6 flex items-center">
+                        <Plus className="w-6 h-6 mr-2 text-text-primary" /> Catat Transaksi
                     </h2>
-                    <div className="relative z-10">
+                    <div>
                         {categories.length > 0 ? (
                             <TransactionForm 
                                 categories={categories} 
                                 onSuccess={() => setIsCreatingTransaction(false)}
                             />
                         ) : (
-                            <div className="p-4 bg-surfaceHighlight rounded-xl border border-border text-sm text-gray-400 text-center">
-                                Harap <Link href={route('categories.index')} className="text-indigo-400 hover:text-indigo-300 transition-colors font-medium">buat kategori</Link> terlebih dahulu sebelum mencatat transaksi.
+                            <div className="p-4 bg-surface-elevated rounded-card border border-border text-sm text-text-secondary text-center">
+                                Harap <Link href={route('categories.index')} className="text-text-primary hover:text-accent transition-colors font-medium">buat kategori</Link> terlebih dahulu sebelum mencatat transaksi.
                             </div>
                         )}
                     </div>
@@ -361,17 +368,16 @@ export default function Index({ transactions, categories, filters }) {
 
             {/* Export Modal */}
             <Modal show={isExporting} onClose={() => setIsExporting(false)} maxWidth="sm">
-                <div className="p-6 bg-surface border border-border relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-500/5 blur-[50px] rounded-full pointer-events-none" />
-                    <h2 className="text-2xl font-display font-medium text-gray-100 mb-6 relative z-10 flex items-center">
-                        <Download className="w-6 h-6 mr-2 text-emerald-500" /> Ekspor Data
+                <div className="p-6 bg-surface border border-border">
+                    <h2 className="text-2xl font-medium text-text-primary mb-6 flex items-center">
+                        <Download className="w-6 h-6 mr-2 text-text-primary" /> Ekspor Data
                     </h2>
-                    <div className="space-y-5 relative z-10">
-                        <p className="text-sm text-gray-400">Pilih rentang tanggal transaksi yang ingin Anda ekspor.</p>
+                    <div className="space-y-5">
+                        <p className="text-sm text-text-secondary">Pilih rentang tanggal transaksi yang ingin Anda ekspor.</p>
                         <div>
-                            <InputLabel value="Dari Tanggal" className="text-gray-400" />
+                            <InputLabel value="Dari Tanggal" />
                             <div className="relative mt-1.5">
-                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary pointer-events-none" />
                                 <TextInput 
                                     type="date" 
                                     className="block w-full pl-10 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert" 
@@ -381,9 +387,9 @@ export default function Index({ transactions, categories, filters }) {
                             </div>
                         </div>
                         <div>
-                            <InputLabel value="Sampai Tanggal" className="text-gray-400" />
+                            <InputLabel value="Sampai Tanggal" />
                             <div className="relative mt-1.5">
-                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary pointer-events-none" />
                                 <TextInput 
                                     type="date" 
                                     className="block w-full pl-10 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert" 
@@ -393,11 +399,11 @@ export default function Index({ transactions, categories, filters }) {
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-3 pt-4">
-                            <SecondaryButton onClick={() => handleExport('pdf')} className="justify-center bg-surfaceHighlight hover:bg-white/10 border-transparent">
-                                <FileText className="w-4 h-4 mr-2 text-rose-400" /> PDF
+                            <SecondaryButton onClick={() => handleExport('pdf')} className="justify-center">
+                                <FileText className="w-4 h-4 mr-2" /> PDF
                             </SecondaryButton>
-                            <SecondaryButton onClick={() => handleExport('csv')} className="justify-center bg-surfaceHighlight hover:bg-white/10 border-transparent">
-                                <TableIcon className="w-4 h-4 mr-2 text-emerald-400" /> CSV
+                            <SecondaryButton onClick={() => handleExport('csv')} className="justify-center">
+                                <TableIcon className="w-4 h-4 mr-2" /> CSV
                             </SecondaryButton>
                         </div>
                     </div>
@@ -407,8 +413,8 @@ export default function Index({ transactions, categories, filters }) {
             {/* Edit Modal */}
             <Modal show={!!editingTransaction} onClose={() => setEditingTransaction(null)}>
                 <div className="p-6 bg-surface border border-border">
-                    <h2 className="text-2xl font-display font-medium text-gray-100 mb-6 flex items-center">
-                        <Edit2 className="w-6 h-6 mr-2 text-indigo-500" /> Edit Transaksi
+                    <h2 className="text-2xl font-medium text-text-primary mb-6 flex items-center">
+                        <Edit2 className="w-6 h-6 mr-2 text-text-primary" /> Edit Transaksi
                     </h2>
                     <TransactionForm 
                         transaction={editingTransaction} 
@@ -421,10 +427,10 @@ export default function Index({ transactions, categories, filters }) {
             {/* Delete Confirmation Modal */}
             <Modal show={!!deletingTransaction} onClose={() => setDeletingTransaction(null)}>
                 <form onSubmit={deleteTransaction} className="p-6 bg-surface border border-border">
-                    <h2 className="text-2xl font-display font-medium text-gray-100 flex items-center text-rose-500">
+                    <h2 className="text-2xl font-medium text-danger flex items-center">
                         <Trash2 className="w-6 h-6 mr-2" /> Hapus Transaksi?
                     </h2>
-                    <p className="mt-4 text-sm text-gray-400 leading-relaxed">Tindakan ini akan menghapus catatan transaksi secara permanen dan memengaruhi kalkulasi saldo Anda. Lanjutkan?</p>
+                    <p className="mt-4 text-sm text-text-secondary leading-relaxed">Tindakan ini akan menghapus catatan transaksi secara permanen dan memengaruhi kalkulasi saldo Anda. Lanjutkan?</p>
                     <div className="mt-8 flex justify-end gap-3">
                         <SecondaryButton onClick={() => setDeletingTransaction(null)}>Batal</SecondaryButton>
                         <DangerButton disabled={deleting}>Hapus Permanen</DangerButton>

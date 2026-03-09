@@ -10,7 +10,7 @@ export default function Select({ value, onChange, options, placeholder = "Pilih 
         <Listbox value={value} onChange={onChange}>
             {({ open }) => (
                 <div className={cn("relative mt-1", className)}>
-                    <Listbox.Button className="relative w-full cursor-pointer rounded-xl border border-border bg-surfaceHighlight py-3 pl-4 pr-10 text-left text-gray-200 shadow-sm transition-colors duration-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
+                    <Listbox.Button className="relative w-full cursor-pointer rounded-input border border-border bg-background py-2.5 pl-3 pr-10 text-left text-text-primary transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-border-strong sm:text-sm">
                         <span className={cn("block truncate", !selectedOption && "text-gray-500")}>
                             {selectedOption ? selectedOption.label : placeholder}
                         </span>
@@ -29,21 +29,21 @@ export default function Select({ value, onChange, options, placeholder = "Pilih 
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <Listbox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-xl bg-[#111111] border border-[#222222] py-1 text-base shadow-2xl focus:outline-none sm:text-sm">
+                        <Listbox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-card bg-surface border border-border py-1 text-base focus:outline-none sm:text-sm">
                             {options.map((option) => (
                                 <Listbox.Option
                                     key={option.value}
                                     className={({ active }) =>
                                         cn(
-                                            'relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors',
-                                            active ? 'bg-white/5 text-white' : 'text-gray-300'
+                                            'relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors duration-200',
+                                            active ? 'bg-surface-elevated text-text-primary' : 'text-text-secondary'
                                         )
                                     }
                                     value={option.value}
                                 >
                                     {({ selected, active }) => (
                                         <>
-                                            <span className={cn('block truncate', selected ? 'font-medium text-white' : 'font-normal')}>
+                                            <span className={cn('block truncate', selected ? 'font-medium text-text-primary' : 'font-normal')}>
                                                 {option.label}
                                             </span>
 
@@ -51,7 +51,7 @@ export default function Select({ value, onChange, options, placeholder = "Pilih 
                                                 <span
                                                     className={cn(
                                                         'absolute inset-y-0 left-0 flex items-center pl-3',
-                                                        active ? 'text-white' : 'text-indigo-500'
+                                                        active ? 'text-text-primary' : 'text-accent'
                                                     )}
                                                 >
                                                     <Check className="h-4 w-4" aria-hidden="true" />

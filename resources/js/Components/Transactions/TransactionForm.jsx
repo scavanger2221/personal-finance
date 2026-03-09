@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
@@ -6,6 +6,7 @@ import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import Select from '@/Components/Select';
+import { formatRupiahInput, parseRupiahInput } from '@/lib/currency';
 
 export default function TransactionForm({ transaction = null, categories, onSuccess }) {
     const isEditing = !!transaction;
@@ -23,6 +24,26 @@ export default function TransactionForm({ transaction = null, categories, onSucc
         transaction_date: formatDateForInput(transaction?.transaction_date),
     });
 
+    const [amountDisplay, setAmountDisplay] = useState(() => formatRupiahInput(transaction?.amount || ''));
+
+    const handleAmountChange = (e) => {
+        const rawValue = parseRupiahInput(e.target.value);
+        setData('amount', rawValue);
+        setAmountDisplay(formatRupiahInput(rawValue));
+    };
+
+    const handleAmountBlur = () => {
+        // Ensure proper format when leaving the field
+        setAmountDisplay(formatRupiahInput(data.amount));
+    };
+
+    const handleAmountFocus = () => {
+        // Clear display if amount is 0 or empty
+        if (!data.amount || data.amount === '0') {
+            setAmountDisplay('');
+        }
+    };
+
     const submit = (e) => {
         e.preventDefault();
         
@@ -30,6 +51,7 @@ export default function TransactionForm({ transaction = null, categories, onSucc
             put(route('transactions.update', transaction.id), {
                 onSuccess: () => {
                     reset();
+                    setAmountDisplay('');
                     onSuccess?.();
                 },
             });
@@ -37,6 +59,7 @@ export default function TransactionForm({ transaction = null, categories, onSucc
             post(route('transactions.store'), {
                 onSuccess: () => {
                     reset();
+                    setAmountDisplay('');
                     onSuccess?.();
                 },
             });
@@ -67,12 +90,14 @@ export default function TransactionForm({ transaction = null, categories, onSucc
                     <InputLabel htmlFor="amount" value="Jumlah" className="text-gray-300 font-medium" />
                     <TextInput
                         id="amount"
-                        type="number"
-                        step="0.01"
-                        min="0.01"
+                        type="text"
+                        inputMode="numeric"
                         className="mt-1.5 block w-full py-3"
-                        value={data.amount}
-                        onChange={(e) => setData('amount', e.target.value)}
+                        value={amountDisplay}
+                        onChange={handleAmountChange}
+                        onBlur={handleAmountBlur}
+                        onFocus={handleAmountFocus}
+                        placeholder="Rp0"
                         required
                     />
                     <InputError message={errors.amount} className="mt-2" />

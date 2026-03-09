@@ -1,4 +1,18 @@
 import { motion } from 'framer-motion';
+import TextInput from '@/Components/TextInput';
+import React from 'react';
+
+const rowVariants = {
+    hidden: { opacity: 0 },
+    visible: (i) => ({
+        opacity: 1,
+        transition: {
+            delay: i * 0.02,
+            duration: 0.2,
+            ease: [0.4, 0, 0.2, 1]
+        }
+    })
+};
 
 /**
  * Table wrapper component with loading animation
@@ -10,14 +24,12 @@ import { motion } from 'framer-motion';
  */
 export function TableWrapper({ children, isLoading, resultsKey, className = '' }) {
     return (
-        <motion.div
+        <div
             key={resultsKey}
-            className={`overflow-hidden ${className}`}
-            animate={{ opacity: isLoading ? 0.72 : 1 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className={`overflow-hidden transition-opacity duration-200 ${isLoading ? 'opacity-70' : 'opacity-100'} ${className}`}
         >
             {children}
-        </motion.div>
+        </div>
     );
 }
 
@@ -45,12 +57,34 @@ export function SortableHeader({
     return (
         <th
             onClick={() => onClick(field)}
-            className={`px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-border cursor-pointer hover:text-gray-300 transition-colors select-none ${alignClass} ${className}`}
+            className={`px-4 py-3 text-xs font-medium text-text-tertiary tracking-wider border-b border-border cursor-pointer hover:text-text-primary transition-colors duration-200 select-none ${alignClass} ${className}`}
         >
             <span className={flexClass}>
                 {children} <SortIcon field={field} />
             </span>
         </th>
+    );
+}
+
+/**
+ * Table cell component with automatic border styling
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Cell content
+ * @param {string} props.className - Additional CSS classes
+ * @param {boolean} props.last - Whether this is the last cell in the row (no right border)
+ * @param {string} props.align - Text alignment ('left' | 'center' | 'right')
+ */
+export function TableCell({ children, className = '', align = 'left' }) {
+    const alignClasses = {
+        left: 'text-left',
+        center: 'text-center',
+        right: 'text-right'
+    };
+
+    return (
+        <td className={`px-4 py-3 whitespace-nowrap text-sm ${alignClasses[align]} ${className}`}>
+            {children}
+        </td>
     );
 }
 
@@ -64,10 +98,11 @@ export function SortableHeader({
 export function AnimatedTableRow({ children, index, className = '' }) {
     return (
         <motion.tr
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: index * 0.05 }}
-            className={`group bg-surfaceHighlight/30 hover:bg-surfaceHighlight/80 transition-colors ${className}`}
+            variants={rowVariants}
+            initial="hidden"
+            animate="visible"
+            custom={index}
+            className={`group hover:bg-surface-elevated/50 transition-colors duration-200 ${className}`}
         >
             {children}
         </motion.tr>
@@ -83,9 +118,9 @@ export function AnimatedTableRow({ children, index, className = '' }) {
  */
 export function EmptyTableState({ icon: Icon, title, description }) {
     return (
-        <div className="py-24 flex flex-col items-center justify-center text-gray-500">
-            <Icon className="w-20 h-20 opacity-10 mb-6" />
-            <p className="text-xl font-display text-gray-400">{title}</p>
+        <div className="py-24 flex flex-col items-center justify-center text-text-tertiary">
+            <Icon className="w-20 h-20 opacity-20 mb-6" />
+            <p className="text-xl font-semibold text-text-secondary">{title}</p>
             <p className="text-sm mt-2">{description}</p>
         </div>
     );
@@ -99,7 +134,7 @@ export function EmptyTableState({ icon: Icon, title, description }) {
  */
 export function TableActions({ children, className = '' }) {
     return (
-        <div className={`flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity ${className}`}>
+        <div className={`flex justify-end space-x-2 ${className}`}>
             {children}
         </div>
     );
@@ -118,15 +153,15 @@ export function TableActions({ children, className = '' }) {
 export function TableActionButton({ 
     onClick, 
     icon: Icon, 
-    color = 'indigo',
+    color = 'accent',
     disabled = false,
     title,
     className = '' 
 }) {
     const colorClasses = {
-        indigo: 'text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10',
-        rose: 'text-gray-400 hover:text-rose-400 hover:bg-rose-500/10',
-        gray: 'text-gray-600 cursor-not-allowed',
+        accent: 'text-text-tertiary hover:text-text-primary hover:bg-surface-elevated',
+        danger: 'text-text-tertiary hover:text-danger hover:bg-danger/10',
+        gray: 'text-text-disabled cursor-not-allowed',
     };
 
     return (
@@ -134,7 +169,7 @@ export function TableActionButton({
             onClick={onClick}
             disabled={disabled}
             title={title}
-            className={`p-2 rounded-lg transition-colors ${colorClasses[color]} ${className}`}
+            className={`p-2 rounded-button transition-colors duration-200 ${colorClasses[color]} ${className}`}
         >
             <Icon size={16} />
         </button>
@@ -163,27 +198,27 @@ export function SearchInput({
 }) {
     return (
         <div className="relative w-full">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none">
                 <SearchIcon className="w-5 h-5" />
             </div>
-            <input
+            <TextInput
                 type="text"
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className="w-full pl-12 pr-12 py-3 bg-surface border border-border rounded-xl text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-colors duration-200"
+                className="w-full pl-10 pr-10"
             />
             {value && !isLoading && (
                 <button
                     onClick={onClear}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors p-1.5 hover:bg-surfaceHighlight rounded-lg"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary transition-colors duration-200 p-1 hover:bg-surface-elevated rounded"
                 >
                     <ClearIcon className="w-4 h-4" />
                 </button>
             )}
             {isLoading && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <div className="w-5 h-5 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="w-5 h-5 border-2 border-border-strong border-t-accent rounded-full animate-spin" />
                 </div>
             )}
         </div>
@@ -201,8 +236,8 @@ export function ResultsCount({ count, label = 'results found', visible = true })
     if (!visible) return null;
 
     return (
-        <div className="flex items-center gap-2 text-sm text-gray-400">
-            <span className="px-2 py-1 bg-indigo-500/10 text-indigo-400 rounded-md font-medium">
+        <div className="flex items-center gap-2 text-sm text-text-secondary">
+            <span className="px-2 py-1 bg-surface-elevated text-text-primary rounded-md font-medium">
                 {count}
             </span>
             <span>{label}</span>
