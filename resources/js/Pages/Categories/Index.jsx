@@ -1,12 +1,22 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, useForm, router } from '@inertiajs/react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Modal from '@/Components/Modal';
 import CategoryForm from '@/Components/Categories/CategoryForm';
 import DangerButton from '@/Components/DangerButton';
 import SecondaryButton from '@/Components/SecondaryButton';
-import { Edit2, Trash2, Plus, FolderHeart } from 'lucide-react';
+import { Edit2, Trash2, Plus, FolderHeart, Search, X } from 'lucide-react';
+import {
+    TableWrapper,
+    SortableHeader,
+    AnimatedTableRow,
+    EmptyTableState,
+    TableActions,
+    TableActionButton,
+    SearchInput,
+    ResultsCount,
+} from '@/Components/Table';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -21,11 +31,95 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
 
-export default function Index({ categories }) {
+export default function Index({ categories, filters }) {
     const [isCreatingCategory, setIsCreatingCategory] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
     const [deletingCategory, setDeletingCategory] = useState(null);
+    const [searchQuery, setSearchQuery] = useState(filters?.search || '');
+    const [isSearching, setIsSearching] = useState(false);
+    const lastSubmittedSearch = useRef((filters?.search || '').trim());
     const { delete: destroy, processing } = useForm();
+
+    const currentSort = filters?.sort || 'name';
+    const currentDirection = filters?.direction || 'asc';
+
+    const handleSort = (field) => {
+        const newDirection = currentSort === field && currentDirection === 'asc' ? 'desc' : 'asc';
+        router.get(route('categories.index'), {
+            ...filters,
+            sort: field,
+            direction: newDirection,
+        }, {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['categories', 'filters'],
+        });
+    };
+
+    const SortIcon = ({ field }) => {
+        if (currentSort !== field) {
+            return <span className="inline-block w-3 h-3 text-gray-600 opacity-50">↕</span>;
+        }
+        return <span className="inline-block w-3 h-3 text-indigo-400">{currentDirection === 'asc' ? '↑' : '↓'}</span>;
+    };
+
+    const visitCategories = useCallback((search = '') => {
+        let spinnerTimeoutId;
+        const normalizedSearch = search.trim();
+
+        lastSubmittedSearch.current = normalizedSearch;
+
+        const params = {
+            sort: currentSort,
+            direction: currentDirection,
+        };
+
+        if (normalizedSearch) {
+            params.search = normalizedSearch;
+        }
+
+        router.get(
+            route('categories.index'),
+            params,
+            {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['categories', 'filters'],
+                replace: true,
+                onStart: () => {
+                    spinnerTimeoutId = window.setTimeout(() => setIsSearching(true), 150);
+                },
+                onFinish: () => {
+                    window.clearTimeout(spinnerTimeoutId);
+                    setIsSearching(false);
+                },
+            }
+        );
+    }, [currentSort, currentDirection]);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            const normalizedQuery = searchQuery.trim();
+            const currentSearch = lastSubmittedSearch.current;
+
+            if (normalizedQuery !== currentSearch) {
+                visitCategories(normalizedQuery);
+            }
+        }, 450);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchQuery, visitCategories]);
+
+    const handleSearch = useCallback((e) => {
+        setSearchQuery(e.target.value);
+    }, []);
+
+    const clearSearch = useCallback(() => {
+        setSearchQuery('');
+        visitCategories('');
+    }, [visitCategories]);
+
+    const resultsKey = categories.map((category) => category.id).join('-') || 'empty-results';
 
     const deleteCategory = (e) => {
         e.preventDefault();
@@ -37,22 +131,43 @@ export default function Index({ categories }) {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
-                    <div>
-                        <h2 className="text-3xl font-display font-semibold text-gray-100 tracking-tight">
-                            Kategori
-                        </h2>
-                        <p className="mt-1 text-sm text-gray-400">Atur pengelompokan transaksi keuangan Anda.</p>
+                <div className="flex flex-col gap-6">
+                    {/* Title Row */}
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                        <div>
+                            <h2 className="text-3xl font-display font-semibold text-gray-100 tracking-tight">
+                                Kategori
+                            </h2>
+                            <p className="mt-1 text-sm text-gray-400">Atur pengelompokan transaksi keuangan Anda.</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => setIsCreatingCategory(true)}
+                                className="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-white text-black border border-transparent rounded-lg font-medium text-sm focus:outline-none transition-all duration-200 shadow-sm"
+                            >
+                                <Plus className="w-4 h-4 mr-2" />
+                                Buat Kategori
+                            </button>
+                        </div>
                     </div>
-                    <div className="flex space-x-3">
-                        <button
-                            onClick={() => setIsCreatingCategory(true)}
-                            className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 border border-transparent rounded-xl font-medium text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-background transition-all duration-200 shadow-[0_0_20px_rgba(99,102,241,0.3)]"
-                        >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Buat Kategori
-                        </button>
-                    </div>
+
+                    {/* Search Bar - Full Width */}
+                    <SearchInput
+                        value={searchQuery}
+                        onChange={handleSearch}
+                        onClear={clearSearch}
+                        isLoading={isSearching}
+                        placeholder="Cari kategori..."
+                        searchIcon={Search}
+                        clearIcon={X}
+                    />
+
+                    {/* Results Count */}
+                    <ResultsCount
+                        count={categories.length}
+                        label="hasil ditemukan"
+                        visible={!!filters?.search}
+                    />
                 </div>
             }
         >
@@ -71,69 +186,67 @@ export default function Index({ categories }) {
                             <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
                             
                             <div className="p-6 relative z-10">
-                                <h3 className="text-xl font-display font-medium text-gray-100 mb-6">Daftar Kategori</h3>
-                                
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full text-left border-separate border-spacing-y-2">
-                                        <thead>
-                                            <tr>
-                                                <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-border">Nama</th>
-                                                <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-border">Tipe</th>
-                                                <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-border text-right">Total Transaksi</th>
-                                                <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-border text-right">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y-0">
-                                            {categories.map((category, index) => (
-                                                <motion.tr 
-                                                    initial={{ opacity: 0, x: -10 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: index * 0.05 }}
-                                                    key={category.id} 
-                                                    className="group bg-surfaceHighlight/30 hover:bg-surfaceHighlight/80 transition-colors"
-                                                >
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-200 rounded-l-xl">
-                                                        {category.name}
-                                                    </td>
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm">
-                                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border ${category.type === 'income' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
-                                                            {category.type === 'income' ? 'Pendapatan' : 'Pengeluaran'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-400 font-display text-right">
-                                                        {category.transactions_count} <span className="text-gray-600 text-xs ml-1">entri</span>
-                                                    </td>
-                                                    <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium rounded-r-xl">
-                                                        <div className="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <button
-                                                                onClick={() => setEditingCategory(category)}
-                                                                className="p-2 text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-colors"
-                                                            >
-                                                                <Edit2 size={16} />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => setDeletingCategory(category)}
-                                                                className={`p-2 rounded-lg transition-colors ${category.transactions_count > 0 ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 hover:text-rose-400 hover:bg-rose-500/10'}`}
-                                                                disabled={category.transactions_count > 0}
-                                                                title={category.transactions_count > 0 ? "Tidak dapat menghapus kategori yang memiliki transaksi" : "Hapus kategori"}
-                                                            >
-                                                                <Trash2 size={16} />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </motion.tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                <TableWrapper isLoading={isSearching} resultsKey={resultsKey}>
+                                    <div className="overflow-x-auto overflow-y-hidden">
+                                        <table className="min-w-full text-left border-separate border-spacing-y-2">
+                                            <thead>
+                                                <tr>
+                                                    <SortableHeader field="name" onClick={handleSort} SortIcon={SortIcon}>
+                                                        Nama
+                                                    </SortableHeader>
+                                                    <SortableHeader field="type" onClick={handleSort} SortIcon={SortIcon}>
+                                                        Tipe
+                                                    </SortableHeader>
+                                                    <SortableHeader field="transactions_count" onClick={handleSort} SortIcon={SortIcon} align="right">
+                                                        Total Transaksi
+                                                    </SortableHeader>
+                                                    <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-border text-right">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y-0">
+                                                {categories.map((category, index) => (
+                                                    <AnimatedTableRow key={category.id} index={index}>
+                                                        <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-200 rounded-l-xl">
+                                                            {category.name}
+                                                        </td>
+                                                        <td className="px-4 py-4 whitespace-nowrap text-sm">
+                                                            <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border ${category.type === 'income' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
+                                                                {category.type === 'income' ? 'Pendapatan' : 'Pengeluaran'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-400 font-display text-right">
+                                                            {category.transactions_count} <span className="text-gray-600 text-xs ml-1">entri</span>
+                                                        </td>
+                                                        <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium rounded-r-xl">
+                                                            <TableActions>
+                                                                <TableActionButton
+                                                                    onClick={() => setEditingCategory(category)}
+                                                                    icon={Edit2}
+                                                                    color="indigo"
+                                                                />
+                                                                <TableActionButton
+                                                                    onClick={() => setDeletingCategory(category)}
+                                                                    icon={Trash2}
+                                                                    color={category.transactions_count > 0 ? 'gray' : 'rose'}
+                                                                    disabled={category.transactions_count > 0}
+                                                                    title={category.transactions_count > 0 ? "Tidak dapat menghapus kategori yang memiliki transaksi" : "Hapus kategori"}
+                                                                />
+                                                            </TableActions>
+                                                        </td>
+                                                    </AnimatedTableRow>
+                                                ))}
+                                            </tbody>
+                                        </table>
 
-                                    {categories.length === 0 && (
-                                        <div className="py-24 flex flex-col items-center justify-center text-gray-500">
-                                            <FolderHeart className="w-20 h-20 opacity-10 mb-6" />
-                                            <p className="text-xl font-display text-gray-400">Belum ada kategori yang dibuat.</p>
-                                            <p className="text-sm mt-2">Mulai dengan membuat kategori pengeluaran atau pendapatan.</p>
-                                        </div>
-                                    )}
-                                </div>
+                                        {categories.length === 0 && (
+                                            <EmptyTableState
+                                                icon={FolderHeart}
+                                                title="Belum ada kategori yang dibuat."
+                                                description="Mulai dengan membuat kategori pengeluaran atau pendapatan."
+                                            />
+                                        )}
+                                    </div>
+                                </TableWrapper>
                             </div>
                         </div>
                     </motion.div>

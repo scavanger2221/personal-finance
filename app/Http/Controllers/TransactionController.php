@@ -21,16 +21,38 @@ class TransactionController extends Controller
      */
     public function index(): Response
     {
-        $transactions = Transaction::forUser(Auth::id())
-            ->with('category')
-            ->latestFirst()
-            ->paginate(20);
+        $query = Transaction::forUser(Auth::id())
+            ->with('category');
+
+        if (request()->has('search') && request()->search) {
+            $search = request()->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'ilike', "%{$search}%")
+                  ->orWhereHas('category', function ($cat) use ($search) {
+                      $cat->where('name', 'ilike', "%{$search}%");
+                  });
+            });
+        }
+
+        // Sorting
+        $sortField = request()->input('sort', 'transaction_date');
+        $sortDirection = request()->input('direction', 'desc');
+
+        $allowedSorts = ['transaction_date', 'amount', 'description'];
+        if (in_array($sortField, $allowedSorts)) {
+            $query->orderBy($sortField, $sortDirection === 'asc' ? 'asc' : 'desc');
+        } else {
+            $query->latestFirst();
+        }
+
+        $transactions = $query->paginate(20)->withQueryString();
 
         $categories = Category::forUser(Auth::id())->get();
 
         return Inertia::render('Transactions/Index', [
             'transactions' => $transactions,
             'categories' => $categories,
+            'filters' => request()->only(['search', 'sort', 'direction']),
         ]);
     }
 

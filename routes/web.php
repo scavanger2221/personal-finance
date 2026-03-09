@@ -19,12 +19,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('categories', CategoryController::class)->except(['create', 'edit', 'show']);
     
     Route::resource('transactions', TransactionController::class)->except(['create', 'edit', 'show']);
-    Route::post('transactions', [TransactionController::class, 'store'])
-        ->name('transactions.store')
-        ->middleware('throttle:transactions');
-    Route::put('transactions/{transaction}', [TransactionController::class, 'update'])
-        ->name('transactions.update')
-        ->middleware('throttle:transactions');
 
     Route::get('exports', [ExportController::class, 'export'])
         ->name('exports.transactions')

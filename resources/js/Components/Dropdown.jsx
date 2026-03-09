@@ -38,6 +38,7 @@ const Trigger = ({ children }) => {
 const Content = ({
     align = 'right',
     width = '48',
+    position = 'bottom',
     contentClasses = 'py-1 bg-white',
     children,
 }) => {
@@ -51,6 +52,14 @@ const Content = ({
         alignmentClasses = 'ltr:origin-top-right rtl:origin-top-left end-0';
     }
 
+    let positionClasses = 'mt-2';
+    let originClasses = 'origin-top';
+
+    if (position === 'top') {
+        positionClasses = 'bottom-full mb-2';
+        originClasses = 'origin-bottom';
+    }
+
     let widthClasses = '';
 
     if (width === '48') {
@@ -61,15 +70,15 @@ const Content = ({
         <>
             <Transition
                 show={open}
-                enter="transition ease-out duration-200"
+                enter={`transition ease-out duration-200 ${originClasses}`}
                 enterFrom="opacity-0 scale-95"
                 enterTo="opacity-100 scale-100"
-                leave="transition ease-in duration-75"
+                leave={`transition ease-in duration-75 ${originClasses}`}
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
             >
                 <div
-                    className={`absolute z-50 mt-2 rounded-md shadow-lg ${alignmentClasses} ${widthClasses}`}
+                    className={`absolute z-50 ${positionClasses} rounded-md shadow-lg ${alignmentClasses} ${widthClasses}`}
                     onClick={() => setOpen(false)}
                 >
                     <div

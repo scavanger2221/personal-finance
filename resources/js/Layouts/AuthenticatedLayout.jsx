@@ -94,7 +94,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             </button>
                         </Dropdown.Trigger>
 
-                        <Dropdown.Content align="top" width="48" contentClasses="py-1 bg-[#111111] border border-[#222222] shadow-2xl rounded-xl">
+                        <Dropdown.Content align="right" position="top" width="48" contentClasses="py-1 bg-[#111111] border border-[#222222] shadow-2xl rounded-xl">
                             <div className="px-4 py-2 border-b border-[#222222] mb-1">
                                 <p className="text-sm text-white font-medium truncate">{user.name}</p>
                             </div>

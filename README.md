@@ -1,59 +1,281 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Personal Finance App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi manajemen keuangan pribadi berbasis web dengan desain minimalis dan gelap. Dibuat dengan Laravel, React, dan Inertia.js untuk memberikan pengalaman pengguna yang cepat dan responsif.
 
-## About Laravel
+Fitur utama aplikasi ini mencakup pencatatan transaksi pemasukan dan pengeluaran, pengelolaan kategori, visualisasi data keuangan melalui grafik dan laporan, serta kemampuan ekspor data ke format PDF dan CSV. Desain antarmuka mengusung filosofi minimalis dengan palet warna gelap tanpa gradient atau bayangan yang berlebihan.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Pencatatan transaksi pemasukan dan pengeluaran
+- Manajemen kategori keuangan
+- Dashboard dengan visualisasi grafik keuangan
+- Laporan keuangan terperinci
+- Ekspor data ke format PDF dan CSV
+- Autentikasi pengguna
+- Antarmuka minimalis dengan tema gelap
+- Responsif untuk desktop dan mobile
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Teknologi yang Digunakan
 
-## Learning Laravel
+- **Backend**: Laravel 12 (PHP 8.2+)
+- **Frontend**: React 18 dengan Inertia.js
+- **Styling**: Tailwind CSS 3
+- **Database**: SQLite (default), PostgreSQL (container)
+- **Container**: Docker/Podman support
+- **Package Manager**: Composer, NPM
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Prasyarat
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.2 atau lebih tinggi
+- Composer
+- Node.js 20 atau lebih tinggi
+- NPM atau Yarn
+- SQLite (untuk instalasi normal)
+- Docker atau Podman (opsional, untuk container)
+- Git
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Cara Instalasi
 
-### Premium Partners
+### Metode 1: Instalasi dengan PHP Normal
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Ikuti langkah-langkah berikut untuk menjalankan aplikasi menggunakan PHP native di mesin lokal Anda.
 
-## Contributing
+#### 1. Clone Repository
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+git clone https://github.com/scavanger2221/personal-finance.git
+cd personal-finance
+```
 
-## Code of Conduct
+#### 2. Install Dependensi PHP
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer install
+```
 
-## Security Vulnerabilities
+#### 3. Konfigurasi Environment
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## License
+#### 4. Setup Database
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Aplikasi menggunakan SQLite sebagai database default. Pastikan file database dibuat:
+
+```bash
+touch database/database.sqlite
+```
+
+#### 5. Jalankan Migrasi Database
+
+```bash
+php artisan migrate
+```
+
+#### 6. Install Dependensi JavaScript
+
+```bash
+npm install
+```
+
+#### 7. Build Assets
+
+Untuk development:
+```bash
+npm run dev
+```
+
+Untuk production:
+```bash
+npm run build
+```
+
+#### 8. Jalankan Aplikasi
+
+```bash
+php artisan serve
+```
+
+Aplikasi akan berjalan di `http://localhost:8000`
+
+#### Menggunakan Script Setup (Cepat)
+
+Anda juga dapat menggunakan script setup yang sudah disediakan:
+
+```bash
+composer run setup
+```
+
+Script ini akan otomatis menjalankan semua langkah instalasi di atas.
+
+---
+
+### Metode 2: Instalasi dengan Container (Docker/Podman)
+
+Gunakan metode ini jika Anda ingin menjalankan aplikasi dalam lingkungan container yang terisolasi.
+
+#### Prasyarat Container
+
+- Docker Engine atau Podman
+- Docker Compose (untuk Docker)
+- Podman Compose (opsional, untuk Podman)
+
+#### 1. Clone Repository
+
+```bash
+git clone https://github.com/scavanger2221/personal-finance.git
+cd personal-finance
+```
+
+#### 2. Build dan Jalankan Container
+
+**Menggunakan Docker:**
+
+```bash
+# Build image
+docker build -t personal-finance .
+
+# Jalankan container
+docker run -d \
+  --name personal-finance \
+  -p 9000:9000 \
+  -v $(pwd):/var/www \
+  personal-finance
+```
+
+**Menggunakan Podman:**
+
+```bash
+# Build image
+podman build -t personal-finance .
+
+# Jalankan container
+podman run -d \
+  --name personal-finance \
+  -p 9000:9000 \
+  -v $(pwd):/var/www \
+  personal-finance
+```
+
+#### 3. Setup Database dan Migrasi
+
+Masuk ke dalam container dan jalankan migrasi:
+
+**Docker:**
+```bash
+docker exec -it personal-finance bash
+php artisan migrate
+exit
+```
+
+**Podman:**
+```bash
+podman exec -it personal-finance bash
+php artisan migrate
+exit
+```
+
+#### 4. Akses Aplikasi
+
+Aplikasi akan tersedia di `http://localhost:9000`
+
+#### 5. Menghentikan Container
+
+**Docker:**
+```bash
+docker stop personal-finance
+docker rm personal-finance
+```
+
+**Podman:**
+```bash
+podman stop personal-finance
+podman rm personal-finance
+```
+
+---
+
+## Penggunaan
+
+Setelah aplikasi berjalan, buka browser dan akses URL yang sesuai dengan metode instalasi yang Anda pilih:
+
+- **PHP Normal**: `http://localhost:8000`
+- **Container**: `http://localhost:9000`
+
+### Langkah Awal
+
+1. Daftarkan akun baru atau login jika sudah memiliki akun
+2. Tambahkan kategori keuangan sesuai kebutuhan Anda
+3. Mulai mencatat transaksi pemasukan dan pengeluaran
+4. Lihat dashboard untuk melihat ringkasan keuangan
+5. Gunakan fitur laporan untuk analisis lebih detail
+
+## Pengembangan
+
+### Perintah yang Berguna
+
+```bash
+# Jalankan development server
+composer run dev
+
+# Jalankan test
+composer run test
+
+# Format kode dengan Pint
+./vendor/bin/pint
+
+# Jalankan queue worker
+php artisan queue:work
+
+# Jalankan queue listener
+php artisan queue:listen
+```
+
+### Struktur Proyek
+
+```
+personal-finance/
+├── app/                 # Kode aplikasi Laravel
+├── bootstrap/           # File bootstrap
+├── config/              # Konfigurasi
+├── database/            # Migrasi, seeder, dan factory
+├── docker/              # File konfigurasi Docker
+├── public/              # Entry point dan assets publik
+├── resources/           # Views, React components, dan assets
+├── routes/              # Definisi route
+├── storage/             # Logs, cache, dan uploads
+├── tests/               # Unit dan feature tests
+├── .env.example         # Contoh konfigurasi environment
+├── composer.json        # Dependensi PHP
+├── Dockerfile           # Konfigurasi container
+├── package.json         # Dependensi JavaScript
+└── vite.config.js       # Konfigurasi Vite
+```
+
+## Kontribusi
+
+Kontribusi sangat diterima! Jika Anda ingin berkontribusi:
+
+1. Fork repository ini
+2. Buat branch fitur baru (`git checkout -b fitur/fitur-baru`)
+3. Commit perubahan Anda (`git commit -am 'Menambahkan fitur baru'`)
+4. Push ke branch (`git push origin fitur/fitur-baru`)
+5. Buat Pull Request
+
+## Lisensi
+
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+
+## Penulis
+
+Dibuat dengan oleh [scavanger2221](https://github.com/scavanger2221)
+
+---
+
+## Dukungan
+
+Jika Anda mengalami masalah atau memiliki pertanyaan, silakan buat issue di [GitHub Issues](https://github.com/scavanger2221/personal-finance/issues).

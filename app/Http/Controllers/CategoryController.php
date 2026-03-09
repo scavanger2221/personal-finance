@@ -20,13 +20,34 @@ class CategoryController extends Controller
      */
     public function index(): Response
     {
-        $categories = Category::forUser(Auth::id())
-            ->withCount('transactions')
-            ->orderBy('name')
-            ->get();
+        $query = Category::forUser(Auth::id())
+            ->withCount('transactions');
+
+        // Search
+        if (request()->has('search') && request()->search) {
+            $search = request()->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'ilike', "%{$search}%")
+                  ->orWhere('type', 'ilike', "%{$search}%");
+            });
+        }
+
+        // Sorting
+        $sortField = request()->input('sort', 'name');
+        $sortDirection = request()->input('direction', 'asc');
+
+        $allowedSorts = ['name', 'type', 'transactions_count'];
+        if (in_array($sortField, $allowedSorts)) {
+            $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
+        } else {
+            $query->orderBy('name');
+        }
+
+        $categories = $query->get();
 
         return Inertia::render('Categories/Index', [
             'categories' => $categories,
+            'filters' => request()->only(['search', 'sort', 'direction']),
         ]);
     }
 

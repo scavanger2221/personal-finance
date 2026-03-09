@@ -26,12 +26,21 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
 
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(date);
+};
+
 export default function Dashboard({ summary }) {
-    const { 
-        totalIncome, 
-        totalExpense, 
-        netBalance, 
-        categoryBreakdown, 
+    const {
+        totalIncome,
+        totalExpense,
+        netBalance,
+        categoryBreakdown,
         recentTransactions,
         monthlyTrends
     } = summary;
@@ -142,7 +151,7 @@ export default function Dashboard({ summary }) {
                                             return (
                                                 <tr key={transaction.id} className="hover:bg-surfaceHighlight/30 transition-colors">
                                                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-400">
-                                                        {transaction.transaction_date}
+                                                        {formatDate(transaction.transaction_date)}
                                                     </td>
                                                     <td className="px-4 py-4">
                                                         <div className="flex items-center">

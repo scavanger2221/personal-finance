@@ -9,12 +9,18 @@ import Select from '@/Components/Select';
 
 export default function TransactionForm({ transaction = null, categories, onSuccess }) {
     const isEditing = !!transaction;
-    
+
+    const formatDateForInput = (dateString) => {
+        if (!dateString) return new Date().toISOString().split('T')[0];
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+    };
+
     const { data, setData, post, put, processing, errors, reset } = useForm({
         category_id: transaction?.category_id || (categories.length > 0 ? categories[0].id : ''),
         amount: transaction?.amount || '',
         description: transaction?.description || '',
-        transaction_date: transaction?.transaction_date || new Date().toISOString().split('T')[0],
+        transaction_date: formatDateForInput(transaction?.transaction_date),
     });
 
     const submit = (e) => {
