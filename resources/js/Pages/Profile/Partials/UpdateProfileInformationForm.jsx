@@ -27,18 +27,18 @@ export default function UpdateProfileInformation({
     return (
         <section className={className}>
             <header>
-                <h2 className="text-xl font-display font-medium text-gray-100">
+                <h2 className="text-xl font-display font-medium text-text-primary">
                     Informasi Profil
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-400">
+                <p className="mt-1 text-sm text-text-secondary">
                     Perbarui informasi profil dan alamat email akun Anda.
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Nama" className="text-gray-300" />
+                    <InputLabel htmlFor="name" value="Nama" />
 
                     <TextInput
                         id="name"
@@ -54,7 +54,7 @@ export default function UpdateProfileInformation({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" className="text-gray-300" />
+                    <InputLabel htmlFor="email" value="Email" />
 
                     <TextInput
                         id="email"
@@ -71,7 +71,7 @@ export default function UpdateProfileInformation({
 
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
-                        <p className="mt-2 text-sm text-gray-200">
+                        <p className="mt-2 text-sm text-text-secondary">
                             Alamat email Anda belum diverifikasi.
                             <Link
                                 href={route('verification.send')}
@@ -84,7 +84,7 @@ export default function UpdateProfileInformation({
                         </p>
 
                         {status === 'verification-link-sent' && (
-                            <div className="mt-2 text-sm font-medium text-emerald-400 p-3 bg-emerald-500/10 rounded-lg">
+                            <div className="mt-2 text-sm font-medium text-success p-3 bg-success/10 border border-success/20 rounded-lg">
                                 Tautan verifikasi baru telah dikirim ke email Anda.
                             </div>
                         )}
@@ -101,7 +101,7 @@ export default function UpdateProfileInformation({
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-emerald-400">Berhasil disimpan.</p>
+                        <p className="text-sm text-success">Berhasil disimpan.</p>
                     </Transition>
                 </div>
             </form>

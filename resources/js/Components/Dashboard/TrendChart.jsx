@@ -7,8 +7,7 @@ import {
     CartesianGrid,
     Tooltip,
     Legend,
-    ResponsiveContainer,
-    Cell
+    ResponsiveContainer
 } from 'recharts';
 import { formatRupiah } from '@/lib/currency';
 
@@ -30,7 +29,7 @@ export default function TrendChart({ data }) {
                         <div key={index} className="flex items-center gap-3 mb-1">
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
                             <span className="text-sm text-gray-400">{entry.name}:</span>
-                            <span className={`text-sm font-semibold font-display ${entry.dataKey === 'income' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            <span className={`text-sm font-semibold font-display ${entry.dataKey === 'income' ? 'text-[#2D6A4F]' : 'text-[#9B2C2C]'}`}>
                                 {formatRupiah(entry.value)}
                             </span>
                         </div>
@@ -71,8 +70,8 @@ export default function TrendChart({ data }) {
                     />
                     <Tooltip content={<CustomTooltip />} cursor={{ fill: '#ffffff05' }} />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                    <Bar dataKey="income" name="Pendapatan" fill="#34d399" radius={[4, 4, 0, 0]} maxBarSize={40} />
-                    <Bar dataKey="expense" name="Pengeluaran" fill="#fb7185" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                    <Bar dataKey="income" name="Pendapatan" fill="#2D6A4F" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                    <Bar dataKey="expense" name="Pengeluaran" fill="#9B2C2C" radius={[4, 4, 0, 0]} maxBarSize={40} />
                 </BarChart>
             </ResponsiveContainer>
         </div>

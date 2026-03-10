@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm, Link, router } from '@inertiajs/react';
+import { Head, useForm, Link, router, usePage } from '@inertiajs/react';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Modal from '@/Components/Modal';
@@ -8,6 +8,7 @@ import DangerButton from '@/Components/DangerButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
+import FlashMessage from '@/Components/FlashMessage';
 import {
     TableWrapper,
     SortableHeader,
@@ -19,7 +20,7 @@ import {
     SearchInput,
     ResultsCount,
 } from '@/Components/Table';
-import { Edit2, Trash2, Download, FileText, Table as TableIcon, Plus, Wallet, TrendingUp, TrendingDown, Calendar, Search, X } from 'lucide-react';
+import { Edit2, Trash2, Download, FileText, Table as TableIcon, Plus, Wallet, ArrowUpRight, ArrowDownRight, Calendar, Search, X } from 'lucide-react';
 import { formatRupiah } from '@/lib/currency';
 
 const containerVariants = {
@@ -46,6 +47,7 @@ const itemVariants = {
 };
 
 export default function Index({ transactions, categories, filters }) {
+    const { flash = {} } = usePage().props;
     const [isCreatingTransaction, setIsCreatingTransaction] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState(null);
@@ -211,11 +213,11 @@ export default function Index({ transactions, categories, filters }) {
                 <TableCell>
                     <div className="flex items-center">
                         <div className={`flex-shrink-0 w-10 h-10 rounded-button flex items-center justify-center mr-4 border ${isIncome ? 'bg-success/10 text-success border-success/20' : 'bg-danger/10 text-danger border-danger/20'}`}>
-                            {isIncome ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
+                            {isIncome ? <ArrowUpRight size={18} /> : <ArrowDownRight size={18} />}
                         </div>
                         <div className="min-w-0 flex-1">
                             <div className="text-sm font-medium text-text-primary truncate">{transaction.description || transaction.category.name}</div>
-                            <div className="text-xs text-text-tertiary mt-0.5">{transaction.category.name}</div>
+                            <div className="text-xs text-text-secondary mt-0.5">{transaction.category.name}</div>
                         </div>
                     </div>
                 </TableCell>
@@ -286,15 +288,18 @@ export default function Index({ transactions, categories, filters }) {
                     {/* Results Count */}
                     <ResultsCount
                         count={transactions.total}
-                        label="hasil ditemukan"
-                        visible={!!filters?.search}
+                        label="total transaksi"
+                        visible={true}
                     />
                 </div>
             }
         >
             <Head title="Transaksi" />
 
-            <div className="py-6">
+            <FlashMessage message={flash.success} type="success" />
+            <FlashMessage message={flash.error} type="error" />
+
+            <div>
                 <motion.div 
                     variants={containerVariants}
                     initial="hidden"
@@ -317,10 +322,10 @@ export default function Index({ transactions, categories, filters }) {
                                                 <SortableHeader field="amount" onClick={handleSort} SortIcon={SortIcon} align="right">
                                                     Jumlah
                                                 </SortableHeader>
-                                                <th className="px-4 py-3 text-xs font-medium text-text-secondary tracking-wider border-b border-border-strong text-right">Aksi</th>
+                                                <th className="px-4 py-3 text-xs font-medium text-text-secondary tracking-wider border-b border-border text-right">Aksi</th>
                                             </tr>
                                         </thead>
-                                        <motion.tbody variants={containerVariants} initial="hidden" animate="visible" className="divide-y divide-border/50">
+                                        <motion.tbody variants={containerVariants} initial="hidden" animate="visible" className="divide-y divide-border">
                                             {transactions.data.map((transaction, index) => (
                                                 <AnimatedTableRow key={transaction.id} index={index}>
                                                     <TransactionRow transaction={transaction} />

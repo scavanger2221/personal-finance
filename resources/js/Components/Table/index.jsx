@@ -57,7 +57,7 @@ export function SortableHeader({
     return (
         <th
             onClick={() => onClick(field)}
-            className={`px-4 py-3 text-xs font-medium text-text-tertiary tracking-wider border-b border-border cursor-pointer hover:text-text-primary transition-colors duration-200 select-none ${alignClass} ${className}`}
+            className={`px-4 py-3 text-xs font-medium text-text-secondary tracking-wider border-b border-border cursor-pointer hover:text-text-primary transition-colors duration-200 select-none ${alignClass} ${className}`}
         >
             <span className={flexClass}>
                 {children} <SortIcon field={field} />

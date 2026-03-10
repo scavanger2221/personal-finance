@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class CategoryController extends Controller
 {
@@ -28,7 +28,7 @@ class CategoryController extends Controller
             $search = request()->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('type', 'ilike', "%{$search}%");
+                    ->orWhere('type', 'ilike', "%{$search}%");
             });
         }
 
@@ -59,7 +59,7 @@ class CategoryController extends Controller
         $request->user()->categories()->create($request->validated());
 
         return redirect()->route('categories.index')
-            ->with('message', 'Kategori berhasil dibuat.');
+            ->with('success', 'Kategori berhasil dibuat.');
     }
 
     /**
@@ -73,7 +73,7 @@ class CategoryController extends Controller
         $category->update($request->validated());
 
         return redirect()->route('categories.index')
-            ->with('message', 'Kategori berhasil diperbarui.');
+            ->with('success', 'Kategori berhasil diperbarui.');
     }
 
     /**
@@ -87,6 +87,6 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()->route('categories.index')
-            ->with('message', 'Kategori berhasil dihapus.');
+            ->with('success', 'Kategori berhasil dihapus.');
     }
 }

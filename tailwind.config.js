@@ -3,6 +3,7 @@ import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class',
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -17,27 +18,24 @@ export default {
                 mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
             },
             colors: {
-                // Background colors
-                background: '#0F0F0F',
-                surface: '#141414',
-                'surface-elevated': '#1A1A1A',
+                // CSS Variable-based colors for theme switching
+                background: 'var(--color-bg)',
+                surface: 'var(--color-surface)',
+                'surface-elevated': 'var(--color-surface-elevated)',
                 
-                // Border colors
-                border: '#262626',
-                'border-strong': '#333333',
+                border: 'var(--color-border)',
+                'border-strong': 'var(--color-border-strong)',
                 
-                // Text colors
-                'text-primary': '#FAFAFA',
-                'text-secondary': '#A3A3A3',
-                'text-tertiary': '#737373',
-                'text-disabled': '#525252',
+                'text-primary': 'var(--color-text-primary)',
+                'text-secondary': 'var(--color-text-secondary)',
+                'text-tertiary': 'var(--color-text-tertiary)',
+                'text-disabled': 'var(--color-text-disabled)',
                 
-                // Accent colors
-                accent: '#E5E5E5',
-                'accent-hover': '#FFFFFF',
-                success: '#22C55E',
-                danger: '#EF4444',
-                warning: '#F59E0B',
+                accent: 'var(--color-accent)',
+                'accent-hover': 'var(--color-accent-hover)',
+                success: 'var(--color-success)',
+                danger: 'var(--color-danger)',
+                warning: 'var(--color-warning)',
             },
             spacing: {
                 '1': '4px',

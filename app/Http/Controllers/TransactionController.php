@@ -6,11 +6,11 @@ use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Models\Category;
 use App\Models\Transaction;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TransactionController extends Controller
 {
@@ -28,9 +28,9 @@ class TransactionController extends Controller
             $search = request()->search;
             $query->where(function ($q) use ($search) {
                 $q->where('description', 'ilike', "%{$search}%")
-                  ->orWhereHas('category', function ($cat) use ($search) {
-                      $cat->where('name', 'ilike', "%{$search}%");
-                  });
+                    ->orWhereHas('category', function ($cat) use ($search) {
+                        $cat->where('name', 'ilike', "%{$search}%");
+                    });
             });
         }
 
@@ -45,7 +45,7 @@ class TransactionController extends Controller
             $query->latestFirst();
         }
 
-        $transactions = $query->paginate(20)->withQueryString();
+        $transactions = $query->paginate(10)->withQueryString();
 
         $categories = Category::forUser(Auth::id())->get();
 
@@ -64,7 +64,7 @@ class TransactionController extends Controller
         $request->user()->transactions()->create($request->validated());
 
         return redirect()->route('transactions.index')
-            ->with('message', 'Transaksi berhasil dicatat.');
+            ->with('success', 'Transaksi berhasil dicatat.');
     }
 
     /**
@@ -78,7 +78,7 @@ class TransactionController extends Controller
         $transaction->update($request->validated());
 
         return redirect()->route('transactions.index')
-            ->with('message', 'Transaksi berhasil diperbarui.');
+            ->with('success', 'Transaksi berhasil diperbarui.');
     }
 
     /**
@@ -92,6 +92,6 @@ class TransactionController extends Controller
         $transaction->delete();
 
         return redirect()->route('transactions.index')
-            ->with('message', 'Transaksi berhasil dihapus.');
+            ->with('success', 'Transaksi berhasil dihapus.');
     }
 }

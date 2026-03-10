@@ -1,11 +1,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Modal from '@/Components/Modal';
 import CategoryForm from '@/Components/Categories/CategoryForm';
 import DangerButton from '@/Components/DangerButton';
 import SecondaryButton from '@/Components/SecondaryButton';
+import FlashMessage from '@/Components/FlashMessage';
 import { Edit2, Trash2, Plus, FolderHeart, Search, X } from 'lucide-react';
 import {
     TableWrapper,
@@ -43,6 +44,7 @@ const itemVariants = {
 };
 
 export default function Index({ categories, filters }) {
+    const { flash = {} } = usePage().props;
     const [isCreatingCategory, setIsCreatingCategory] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
     const [deletingCategory, setDeletingCategory] = useState(null);
@@ -176,15 +178,18 @@ export default function Index({ categories, filters }) {
                     {/* Results Count */}
                     <ResultsCount
                         count={categories.length}
-                        label="hasil ditemukan"
-                        visible={!!filters?.search}
+                        label="total kategori"
+                        visible={true}
                     />
                 </div>
             }
         >
             <Head title="Kategori" />
 
-            <div className="py-6">
+            <FlashMessage message={flash.success} type="success" />
+            <FlashMessage message={flash.error} type="error" />
+
+            <div>
                 <motion.div 
                     variants={containerVariants}
                     initial="hidden"
@@ -207,10 +212,10 @@ export default function Index({ categories, filters }) {
                                                 <SortableHeader field="transactions_count" onClick={handleSort} SortIcon={SortIcon} align="right">
                                                     Total Transaksi
                                                 </SortableHeader>
-                                                <th className="px-4 py-3 text-xs font-medium text-text-secondary tracking-wider border-b border-border-strong text-right">Aksi</th>
+                                                <th className="px-4 py-3 text-xs font-medium text-text-secondary tracking-wider border-b border-border text-right">Aksi</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y-0">
+                                        <tbody className="divide-y divide-border">
                                             {categories.map((category, index) => (
                                                 <AnimatedTableRow key={category.id} index={index}>
                                                     <TableCell className="font-medium text-text-primary">

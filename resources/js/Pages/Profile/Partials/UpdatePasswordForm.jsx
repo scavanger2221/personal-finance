@@ -47,11 +47,11 @@ export default function UpdatePasswordForm({ className = '' }) {
     return (
         <section className={className}>
             <header>
-                <h2 className="text-xl font-display font-medium text-gray-100">
+                <h2 className="text-xl font-display font-medium text-text-primary">
                     Perbarui Kata Sandi
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-400">
+                <p className="mt-1 text-sm text-text-secondary">
                     Pastikan akun Anda menggunakan kata sandi yang panjang dan acak agar tetap aman.
                 </p>
             </header>
@@ -61,7 +61,6 @@ export default function UpdatePasswordForm({ className = '' }) {
                     <InputLabel
                         htmlFor="current_password"
                         value="Kata Sandi Saat Ini"
-                        className="text-gray-300"
                     />
 
                     <TextInput
@@ -81,7 +80,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value="Kata Sandi Baru" className="text-gray-300" />
+                    <InputLabel htmlFor="password" value="Kata Sandi Baru" />
 
                     <TextInput
                         id="password"
@@ -100,7 +99,6 @@ export default function UpdatePasswordForm({ className = '' }) {
                     <InputLabel
                         htmlFor="password_confirmation"
                         value="Konfirmasi Kata Sandi"
-                        className="text-gray-300"
                     />
 
                     <TextInput
@@ -130,7 +128,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-emerald-400">Berhasil disimpan.</p>
+                        <p className="text-sm text-success">Berhasil disimpan.</p>
                     </Transition>
                 </div>
             </form>

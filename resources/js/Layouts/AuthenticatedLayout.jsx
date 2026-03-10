@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutDashboard, Receipt, PieChart, Settings, LogOut, Menu, X } from 'lucide-react';
+import { Archive, LayoutDashboard, Receipt, PieChart, Settings, LogOut, Menu, X, User } from 'lucide-react';
 import Dropdown from '@/Components/Dropdown';
+import ThemeToggle from '@/Components/ThemeToggle';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -11,6 +12,7 @@ export default function AuthenticatedLayout({ header, children }) {
         { name: 'Dasbor', href: route('dashboard'), icon: LayoutDashboard, current: route().current('dashboard') },
         { name: 'Transaksi', href: route('transactions.index'), icon: Receipt, current: route().current('transactions.*') },
         { name: 'Kategori', href: route('categories.index'), icon: PieChart, current: route().current('categories.*') },
+        { name: 'Arsip Laporan', href: route('reports.index'), icon: Archive, current: route().current('reports.*') },
     ];
 
     return (
@@ -61,11 +63,23 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
 
                 <div className="p-3 border-t border-border">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs text-text-tertiary px-3">Tema</span>
+                        <ThemeToggle />
+                    </div>
                     <Dropdown>
                         <Dropdown.Trigger>
                             <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-button hover:bg-surface-elevated transition-colors text-left">
-                                <div className="w-8 h-8 rounded-full bg-surface-elevated flex items-center justify-center text-sm font-medium text-text-primary border border-border">
-                                    {user.name.charAt(0).toUpperCase()}
+                                <div className="w-8 h-8 rounded-full bg-surface-elevated flex items-center justify-center text-sm font-medium text-text-primary border border-border overflow-hidden">
+                                    {user.profile_picture_url ? (
+                                        <img
+                                            src={user.profile_picture_url}
+                                            alt={user.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <User size={16} className="text-text-tertiary" />
+                                    )}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-text-primary truncate">{user.name}</p>
@@ -104,7 +118,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:px-8 lg:py-4">
                     <div className="lg:hidden mb-6">
                         {header}
                     </div>

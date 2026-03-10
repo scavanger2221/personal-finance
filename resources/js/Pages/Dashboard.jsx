@@ -5,8 +5,8 @@ import ExpenseChart from '@/Components/Dashboard/ExpenseChart';
 import TrendChart from '@/Components/Dashboard/TrendChart';
 import { motion } from 'framer-motion';
 import { 
-    TrendingUp, 
-    TrendingDown, 
+    ArrowUpRight, 
+    ArrowDownRight, 
     Wallet, 
     ArrowRight, 
     Download,
@@ -100,14 +100,14 @@ export default function Dashboard({ summary }) {
                             <StatsCard 
                                 title="Total Pendapatan" 
                                 amount={totalIncome} 
-                                icon={TrendingUp} 
+                                icon={ArrowUpRight} 
                             />
                         </motion.div>
                         <motion.div variants={itemVariants}>
                             <StatsCard 
                                 title="Total Pengeluaran" 
                                 amount={totalExpense} 
-                                icon={TrendingDown} 
+                                icon={ArrowDownRight} 
                             />
                         </motion.div>
                         <motion.div variants={itemVariants}>
@@ -155,7 +155,7 @@ export default function Dashboard({ summary }) {
                                             <th className="px-4 py-3 text-xs font-medium text-text-tertiary tracking-wider border-b border-border text-right">Jumlah</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-border/50">
+                                    <tbody className="divide-y divide-border">
                                         {recentTransactions.map((transaction) => {
                                             const isIncome = transaction.category.type === 'income';
                                             return (
@@ -166,7 +166,7 @@ export default function Dashboard({ summary }) {
                                                     <td className="px-4 py-3">
                                                         <div className="flex items-center">
                                                             <div className={`flex-shrink-0 w-8 h-8 rounded-button flex items-center justify-center mr-3 border ${isIncome ? 'bg-success/10 text-success border-success/20' : 'bg-danger/10 text-danger border-danger/20'}`}>
-                                                                {isIncome ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                                                                {isIncome ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
                                                             </div>
                                                             <div>
                                                                 <div className="text-sm font-medium text-text-primary">{transaction.description || transaction.category.name}</div>
@@ -175,7 +175,7 @@ export default function Dashboard({ summary }) {
                                                         </div>
                                                     </td>
                                                     <td className="px-4 py-3 whitespace-nowrap text-right">
-                                                        <span className={`text-sm font-medium font-mono ${isIncome ? 'text-success' : 'text-text-primary'}`}>
+                                                        <span className={`text-sm font-medium font-mono ${isIncome ? 'text-success' : 'text-danger'}`}>
                                                             {isIncome ? '+' : '-'}
                                                             {formatRupiah(transaction.amount)}
                                                         </span>

@@ -1,0 +1,75 @@
+flowchart TB
+    user([User])
+
+    subgraph Sistem[Personal Finance Tracker]
+        direction TB
+
+        uc1([Registrasi Akun])
+        uc2([Login])
+        uc3([Logout])
+
+        subgraph KelolaData[Kelola Data]
+            direction LR
+            uc4([Lihat Dashboard])
+            uc5([Kelola Kategori])
+            uc9([Kelola Transaksi])
+            uc13([Cari dan Urutkan Data])
+        end
+
+        subgraph DetailKategori[Detail Kategori]
+            direction LR
+            uc6([Tambah Kategori])
+            uc7([Ubah Kategori])
+            uc8([Hapus Kategori])
+        end
+
+        subgraph DetailTransaksi[Detail Transaksi]
+            direction LR
+            uc10([Tambah Transaksi])
+            uc11([Ubah Transaksi])
+            uc12([Hapus Transaksi])
+        end
+
+        subgraph LaporanDanProfil[Laporan dan Profil]
+            direction LR
+            uc14([Export Laporan PDF])
+            uc15([Export Laporan CSV])
+            uc16([Ubah Profil])
+            uc17([Ganti Password])
+            uc18([Ganti Foto Profil])
+            uc19([Hapus Akun])
+        end
+    end
+
+    user --> uc1
+    user --> uc2
+    user --> uc3
+    user --> uc4
+    user --> uc5
+    user --> uc9
+    user --> uc13
+    user --> uc14
+    user --> uc15
+    user --> uc16
+    user --> uc17
+    user --> uc18
+    user --> uc19
+
+    uc5 --> uc6
+    uc5 --> uc7
+    uc5 --> uc8
+
+    uc9 --> uc10
+    uc9 --> uc11
+    uc9 --> uc12
+
+    uc4 -. "<<include>> : Login" .-> uc2
+    uc5 -. "<<include>> : Login" .-> uc2
+    uc9 -. "<<include>> : Login" .-> uc2
+    uc13 -. "<<include>> : Login" .-> uc2
+    uc14 -. "<<include>> : Login" .-> uc2
+    uc15 -. "<<include>> : Login" .-> uc2
+    uc16 -. "<<include>> : Login" .-> uc2
+    uc17 -. "<<include>> : Login" .-> uc2
+    uc18 -. "<<include>> : Login" .-> uc2
+    uc19 -. "<<include>> : Login" .-> uc2

@@ -5,6 +5,7 @@ namespace App\Services\Reports\Abstracts;
 use App\Services\Reports\Contracts\ReportExporterInterface;
 use App\Services\Reports\TransactionReportData;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 abstract class AbstractReportExporter implements ReportExporterInterface
 {
@@ -14,10 +15,13 @@ abstract class AbstractReportExporter implements ReportExporterInterface
     public function fileName(TransactionReportData $reportData): string
     {
         $dateStr = now()->format('Y_m_d_His');
-        
+        $randomSuffix = Str::lower(Str::random(5));
+
         return sprintf(
-            'laporan_transaksi_%s.%s',
+            'laporan-%s-%s-%s.%s',
+            $this->extension(),
             $dateStr,
+            $randomSuffix,
             $this->extension()
         );
     }

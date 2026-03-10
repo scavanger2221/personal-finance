@@ -1,0 +1,10 @@
+flowchart LR
+    user[User]
+    system((Sistem<br/>Personal Finance Tracker))
+    db[(Database)]
+    fs[(File Storage<br/>Foto Profil / File Laporan)]
+
+    user -->|registrasi / login / kelola data / export| system
+    system -->|dashboard / daftar data / profil / arsip| user
+    system <-->|data user / kategori / transaksi / metadata arsip| db
+    system <-->|foto profil / file laporan| fs

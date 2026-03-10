@@ -1,0 +1,54 @@
+flowchart TB
+    user[User]
+
+    subgraph Proses[Proses Utama]
+        direction LR
+        p1((1.0 Kelola<br/>Autentikasi))
+        p2((2.0 Kelola<br/>Dashboard))
+        p3((3.0 Kelola<br/>Kategori))
+        p4((4.0 Kelola<br/>Transaksi))
+        p5((5.0 Kelola<br/>Export Laporan))
+        p6((6.0 Kelola<br/>Profil))
+    end
+
+    subgraph DataStore[Data Store]
+        direction LR
+        d1[(D1 Data User)]
+        d2[(D2 Data Kategori)]
+        d3[(D3 Data Transaksi)]
+        d4[(D4 Metadata<br/>Arsip Laporan)]
+        d5[(D5 File Storage<br/>Foto Profil / File Laporan)]
+    end
+
+    user -->|data registrasi / login| p1
+    p1 -->|status autentikasi| user
+    p1 <-->|data akun| d1
+
+    user -->|permintaan dashboard| p2
+    p2 -->|ringkasan dashboard| user
+    p2 --> d2
+    p2 --> d3
+
+    user -->|input kategori| p3
+    p3 -->|hasil CRUD kategori| user
+    p3 <-->|data kategori| d2
+    p3 --> d1
+
+    user -->|input transaksi| p4
+    p4 -->|hasil CRUD transaksi| user
+    p4 <-->|data transaksi| d3
+    p4 --> d2
+    p4 --> d1
+
+    user -->|permintaan export| p5
+    p5 -->|file laporan| user
+    p5 --> d2
+    p5 --> d3
+    p5 <-->|metadata arsip| d4
+    p5 <-->|file laporan| d5
+
+    user -->|ubah profil / password / foto| p6
+    p6 -->|profil terbarui| user
+    p6 <-->|data profil| d1
+    p6 --> d4
+    p6 <-->|foto profil| d5

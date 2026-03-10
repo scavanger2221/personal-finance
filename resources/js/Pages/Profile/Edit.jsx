@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+import UpdateProfilePictureForm from './Partials/UpdateProfilePictureForm';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -24,10 +25,10 @@ export default function Edit({ mustVerifyEmail, status }) {
             header={
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
                     <div>
-                        <h2 className="text-3xl font-display font-semibold text-gray-100 tracking-tight">
+                        <h2 className="text-3xl font-display font-semibold text-text-primary tracking-tight">
                             Profil
                         </h2>
-                        <p className="mt-1 text-sm text-gray-400">Kelola pengaturan akun dan preferensi Anda.</p>
+                        <p className="mt-1 text-sm text-text-secondary">Kelola pengaturan akun dan preferensi Anda.</p>
                     </div>
                 </div>
             }
@@ -43,6 +44,16 @@ export default function Edit({ mustVerifyEmail, status }) {
                 >
                     <motion.div variants={itemVariants} className="bg-surface border border-border p-4 shadow-sm sm:rounded-2xl sm:p-8 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none" />
+                        <div className="relative z-10">
+                            <UpdateProfilePictureForm
+                                status={status}
+                                className="max-w-xl"
+                            />
+                        </div>
+                    </motion.div>
+
+                    <motion.div variants={itemVariants} className="bg-surface border border-border p-4 shadow-sm sm:rounded-2xl sm:p-8 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
                         <div className="relative z-10">
                             <UpdateProfileInformationForm
                                 mustVerifyEmail={mustVerifyEmail}
